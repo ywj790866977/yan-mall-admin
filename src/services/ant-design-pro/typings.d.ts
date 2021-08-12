@@ -21,7 +21,7 @@ declare namespace API {
     };
     address?: string;
     phone?: string;
-    roles: Array<string>
+    roles: Array<string>;
   };
 
   type LoginResult = {

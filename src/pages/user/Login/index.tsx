@@ -6,30 +6,34 @@ import {
   UserOutlined,
   WeiboCircleOutlined,
 } from '@ant-design/icons';
-import {message, Space, Tabs} from 'antd';
-import React, {useState} from 'react';
-import ProForm, {ProFormCaptcha, ProFormCheckbox, ProFormText} from '@ant-design/pro-form';
-import {FormattedMessage, history, Link, useIntl, useModel} from 'umi';
+import { message, Space, Tabs } from 'antd';
+import React, { useRef, useState } from 'react';
+import ProForm, { ProFormCaptcha, ProFormCheckbox, ProFormText } from '@ant-design/pro-form';
+import { FormattedMessage, history, Link, useIntl, useModel } from 'umi';
 import Footer from '@/components/Footer';
-import {login} from '@/services/ant-design-pro/api';
-import {getFakeCaptcha} from '@/services/ant-design-pro/login';
+import { login } from '@/services/ant-design-pro/api';
+import { getFakeCaptcha } from '@/services/ant-design-pro/login';
 
 import styles from './index.less';
+import type { ActionType } from '@ant-design/pro-table';
 
 const Login: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [type, setType] = useState<string>('account');
-  const {initialState, setInitialState} = useModel('@@initialState');
-
+  const { initialState, setInitialState } = useModel('@@initialState');
+  const actionRef = useRef<ActionType>();
   const intl = useIntl();
 
   const fetchUserInfo = async () => {
     const userInfo = await initialState?.fetchUserInfo?.();
     if (userInfo) {
-      await setInitialState((s) => ({
-        ...s,
-        currentUser: userInfo,
-      }));
+      // @ts-ignore
+      await setInitialState((s) => {
+        return {
+          ...s,
+          currentUser: userInfo,
+        };
+      });
     }
   };
 
@@ -37,9 +41,9 @@ const Login: React.FC = () => {
     setSubmitting(true);
     try {
       // 登录
-      const msg = await login({...values, type});
+      const msg = await login({ ...values, type });
       if (msg.code === 0) {
-        localStorage.setItem('aut-token', msg.data.access_token)
+        localStorage.setItem('auth-token', msg.data.access_token);
         const defaultLoginSuccessMessage = intl.formatMessage({
           id: 'pages.login.success',
           defaultMessage: '登录成功！',
@@ -48,14 +52,15 @@ const Login: React.FC = () => {
         await fetchUserInfo();
         /** 此方法会跳转到 redirect 参数所在的位置 */
         if (!history) return;
-        const {query} = history.location;
-        const {redirect} = query as { redirect: string };
+        const { query } = history.location;
+        const { redirect } = query as { redirect: string };
         history.push(redirect || '/');
+        actionRef.current?.reload();
         return;
       }
       const defaultLoginFailureMessage = intl.formatMessage({
         id: 'pages.login.failure',
-        defaultMessage: msg && msg.message || '服务的异常',
+        defaultMessage: (msg && msg.message) || '服务的异常',
       });
       message.error(defaultLoginFailureMessage);
     } catch (error) {
@@ -78,12 +83,12 @@ const Login: React.FC = () => {
         <div className={styles.top}>
           <div className={styles.header}>
             <Link to="/">
-              <img alt="logo" className={styles.logo} src="/logo.svg"/>
+              <img alt="logo" className={styles.logo} src="/logo.svg" />
               <span className={styles.title}>Yan-Mall后台管理系统</span>
             </Link>
           </div>
           <div className={styles.desc}>
-            {intl.formatMessage({id: 'pages.layouts.userLayout.title'})}
+            {intl.formatMessage({ id: 'pages.layouts.userLayout.title' })}
           </div>
         </div>
 
@@ -134,7 +139,7 @@ const Login: React.FC = () => {
                   name="username"
                   fieldProps={{
                     size: 'large',
-                    prefix: <UserOutlined className={styles.prefixIcon}/>,
+                    prefix: <UserOutlined className={styles.prefixIcon} />,
                   }}
                   placeholder={intl.formatMessage({
                     id: 'pages.login.username.placeholder',
@@ -156,7 +161,7 @@ const Login: React.FC = () => {
                   name="password"
                   fieldProps={{
                     size: 'large',
-                    prefix: <LockOutlined className={styles.prefixIcon}/>,
+                    prefix: <LockOutlined className={styles.prefixIcon} />,
                   }}
                   placeholder={intl.formatMessage({
                     id: 'pages.login.password.placeholder',
@@ -182,7 +187,7 @@ const Login: React.FC = () => {
                 <ProFormText
                   fieldProps={{
                     size: 'large',
-                    prefix: <MobileOutlined className={styles.prefixIcon}/>,
+                    prefix: <MobileOutlined className={styles.prefixIcon} />,
                   }}
                   name="mobile"
                   placeholder={intl.formatMessage({
@@ -213,7 +218,7 @@ const Login: React.FC = () => {
                 <ProFormCaptcha
                   fieldProps={{
                     size: 'large',
-                    prefix: <LockOutlined className={styles.prefixIcon}/>,
+                    prefix: <LockOutlined className={styles.prefixIcon} />,
                   }}
                   captchaProps={{
                     size: 'large',
@@ -264,26 +269,26 @@ const Login: React.FC = () => {
               }}
             >
               <ProFormCheckbox noStyle name="autoLogin">
-                <FormattedMessage id="pages.login.rememberMe" defaultMessage="自动登录"/>
+                <FormattedMessage id="pages.login.rememberMe" defaultMessage="自动登录" />
               </ProFormCheckbox>
               <a
                 style={{
                   float: 'right',
                 }}
               >
-                <FormattedMessage id="pages.login.forgotPassword" defaultMessage="忘记密码"/>
+                <FormattedMessage id="pages.login.forgotPassword" defaultMessage="忘记密码" />
               </a>
             </div>
           </ProForm>
           <Space className={styles.other}>
-            <FormattedMessage id="pages.login.loginWith" defaultMessage="其他登录方式"/>
-            <AlipayCircleOutlined className={styles.icon}/>
-            <TaobaoCircleOutlined className={styles.icon}/>
-            <WeiboCircleOutlined className={styles.icon}/>
+            <FormattedMessage id="pages.login.loginWith" defaultMessage="其他登录方式" />
+            <AlipayCircleOutlined className={styles.icon} />
+            <TaobaoCircleOutlined className={styles.icon} />
+            <WeiboCircleOutlined className={styles.icon} />
           </Space>
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </div>
   );
 };

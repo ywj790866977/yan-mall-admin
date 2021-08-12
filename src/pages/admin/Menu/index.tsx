@@ -1,11 +1,6 @@
-import React from "react";
-
+import React from 'react';
 
 const Menu: React.FC = () => {
-
-  return (
-    <div>menu</div>
-  )
-
-}
+  return <div>menu</div>;
+};
 export default Menu;

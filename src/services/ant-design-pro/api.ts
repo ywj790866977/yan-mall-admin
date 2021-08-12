@@ -1,6 +1,6 @@
 // @ts-ignore
 /* eslint-disable */
-import {request} from 'umi';
+import { request } from 'umi';
 
 /** 获取当前的用户 GET /api/currentUser */
 export async function currentUser(options?: { [key: string]: any }) {
@@ -27,12 +27,12 @@ export async function login(body: API.LoginParams, options?: { [key: string]: an
     headers: {
       'Content-Type': 'application/json',
     },
-    params:{
+    params: {
       client_id: 'yan-admin',
       client_secret: '123456',
       grant_type: 'password',
       username: body.username,
-      password: body.password
+      password: body.password,
     },
     ...(options || {}),
   });

@@ -1,11 +1,6 @@
-import React from "react";
-
+import React from 'react';
 
 const List: React.FC = () => {
-
-  return (
-    <div>list</div>
-  )
-
-}
+  return <div>list</div>;
+};
 export default List;
