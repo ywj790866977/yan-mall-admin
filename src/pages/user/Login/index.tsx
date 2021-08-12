@@ -16,6 +16,7 @@ import { getFakeCaptcha } from '@/services/ant-design-pro/login';
 
 import styles from './index.less';
 import type { ActionType } from '@ant-design/pro-table';
+import { queryRoutes } from '@/services/admin/menu';
 
 const Login: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
@@ -27,11 +28,12 @@ const Login: React.FC = () => {
   const fetchUserInfo = async () => {
     const userInfo = await initialState?.fetchUserInfo?.();
     if (userInfo) {
-      // @ts-ignore
-      await setInitialState((s) => {
+      const routeRes = await queryRoutes();
+      await setInitialState((s: any) => {
         return {
           ...s,
           currentUser: userInfo,
+          menuData: routeRes.data,
         };
       });
     }
@@ -84,7 +86,7 @@ const Login: React.FC = () => {
           <div className={styles.header}>
             <Link to="/">
               <img alt="logo" className={styles.logo} src="/logo.svg" />
-              <span className={styles.title}>Yan-Mall后台管理系统</span>
+              <span className={styles.title}>后台管理系统</span>
             </Link>
           </div>
           <div className={styles.desc}>
@@ -165,7 +167,7 @@ const Login: React.FC = () => {
                   }}
                   placeholder={intl.formatMessage({
                     id: 'pages.login.password.placeholder',
-                    defaultMessage: '密码: ant.design',
+                    defaultMessage: '密码: 123456',
                   })}
                   rules={[
                     {

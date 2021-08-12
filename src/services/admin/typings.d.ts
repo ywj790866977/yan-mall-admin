@@ -28,4 +28,23 @@ declare namespace API {
     size?: number;
     total?: number;
   };
+
+  type User = {
+    id: string;
+    email?: string;
+    status: number;
+    username: string;
+    mobile: string;
+    gender: number;
+    nickname?: string;
+    password: string;
+    roles: string[];
+  };
+
+  type Role = {
+    id: string;
+    name?: string;
+    status: number;
+    code: string;
+  };
 }

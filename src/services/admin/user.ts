@@ -13,3 +13,27 @@ export async function queryPage(params: any, options?: { [key: string]: any }) {
     ...(options || {}),
   });
 }
+
+/** 新增用户 */
+export async function saveUser(params: API.User, options?: { [key: string]: any }) {
+  return request<{
+    code: number;
+    message: string;
+  }>('/api/yan-admin/v1/user', {
+    method: 'POST',
+    data: params,
+    ...(options || {}),
+  });
+}
+
+/** 更新用户 */
+export async function updateUser(id: number, params: API.User, options?: { [key: string]: any }) {
+  return request<{
+    code: number;
+    message: string;
+  }>(`/api/yan-admin/v1/user/${id}`, {
+    method: 'PUT',
+    data: params,
+    ...(options || {}),
+  });
+}

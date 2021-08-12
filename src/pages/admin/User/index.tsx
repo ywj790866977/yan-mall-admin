@@ -1,6 +1,6 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Input, Tree } from 'antd';
+import { Button, Input, message, Tree } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
@@ -8,28 +8,32 @@ import ProCard from '@ant-design/pro-card';
 import { FormattedMessage } from '@@/plugin-locale/localeExports';
 import type { DataNode, EventDataNode, Key } from 'rc-tree/lib/interface';
 import { queryDeptTree } from '@/services/admin/dept';
-import { queryPage } from '@/services/admin/user';
+import { queryPage, saveUser, updateUser } from '@/services/admin/user';
+import AddModal from '@/pages/admin/User/components/AddModal';
 
-const DeptTree: React.FC = (props: any) => {
-  const { setDeptIds } = props;
+interface DeptTreeProps {
+  setDeptIdsFunc: (s: string) => void;
+}
+
+const DeptTree: React.FC<DeptTreeProps> = (props: DeptTreeProps) => {
+  const { setDeptIdsFunc } = props;
   const { Search } = Input;
+  const [treeNodeData, setTreeNodeData] = useState<DataNode[]>([]);
+
+  // 初始化 生成一级节点
+  useEffect(() => {
+    if (treeNodeData.length === 0) {
+      queryDeptTree().then((res) => {
+        if (res.code === 0) {
+          setTreeNodeData(res.data);
+        }
+      });
+    }
+  }, [treeNodeData.length]);
 
   const search = (keyword: string) => {
     console.log(keyword);
   };
-
-  const [treeNodeData, setTreeNodeData] = useState<DataNode[]>([]);
-  // 初始化 生成一级节点
-  // @ts-ignore
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(async () => {
-    if (treeNodeData.length === 0) {
-      const res = await queryDeptTree();
-      if (res.code === 0) {
-        setTreeNodeData(res.data);
-      }
-    }
-  }, [treeNodeData.length]);
 
   const getDeptId = (deptIds: string[], node: DataNode) => {
     deptIds.push(node.key as string);
@@ -55,7 +59,7 @@ const DeptTree: React.FC = (props: any) => {
       // 获取当前选中id
       const deptIds: string[] = [];
       getDeptId(deptIds, info.node);
-      setDeptIds(deptIds.join(','));
+      setDeptIdsFunc(deptIds.join(','));
     }
   };
 
@@ -63,22 +67,33 @@ const DeptTree: React.FC = (props: any) => {
     <div style={{ padding: 25 }}>
       <Search style={{ marginBottom: 8 }} placeholder="Search" onSearch={search} />
 
-      <Tree
-        // onExpand={this.onExpand}
-        // expandedKeys={expandedKeys}
-        // autoExpandParent={autoExpandParent}
-        treeData={treeNodeData}
-        // loadData={loadTreeData}
-        onSelect={onSelect}
-      />
+      <Tree treeData={treeNodeData} onSelect={onSelect} />
     </div>
   );
 };
 
-const UserList: React.FC = (props: any) => {
-  const { deptIds } = props;
+interface UserListProps {
+  deptIdsVariable: string;
+}
+
+const UserList: React.FC<UserListProps> = (props: UserListProps) => {
+  const { deptIdsVariable } = props;
+  // const [delVisible, setDelVisible] = useState<boolean>(false);
+  const [edtData, setEdtData] = useState<API.UserListItem>();
+  // const [delData, setDelData] = useState<string>();
+  const [addVisible, setAddVisible] = useState<boolean>(false);
 
   const ref = useRef<ActionType>();
+
+  const GenderEnum = {
+    0: { text: '男' },
+    1: { text: '女' },
+  };
+
+  const StatusEnum = {
+    0: { text: '停用', color: '#a2a2a2' },
+    1: { text: '启用', color: '#87d068' },
+  };
 
   const queryUserPage = async (param: any) => {
     const res = await queryPage(param);
@@ -97,6 +112,33 @@ const UserList: React.FC = (props: any) => {
     };
   };
 
+  const option = async (values: any) => {
+    const params: API.User = { ...values };
+    params.status = values.status ? 1 : 0;
+    if (values.id) {
+      const res = await updateUser(values.id, params);
+      if (res && res.code === 0) {
+        setAddVisible(false);
+        setEdtData(undefined);
+        message.success('修改成功');
+        return true;
+      }
+      message.error(res.message);
+      return false;
+    }
+
+    const res = await saveUser(params);
+    // console.log("save res", params)
+    if (res && res.code === 0) {
+      setAddVisible(false);
+      message.success('创建成功');
+      ref.current?.reload();
+      return true;
+    }
+    message.error(res.message);
+    return false;
+  };
+
   const columns: ProColumns<API.UserListItem>[] = [
     {
       dataIndex: 'index',
@@ -106,6 +148,7 @@ const UserList: React.FC = (props: any) => {
     {
       title: '用户Id',
       dataIndex: 'id',
+      search: false,
       copyable: true,
       ellipsis: true,
       tip: '标题过长会自动收缩',
@@ -136,7 +179,7 @@ const UserList: React.FC = (props: any) => {
       title: '性别',
       dataIndex: 'gender',
       valueType: 'select',
-      // valueEnum: GenderEnum,
+      valueEnum: GenderEnum,
       width: '5%',
       search: false,
     },
@@ -158,41 +201,49 @@ const UserList: React.FC = (props: any) => {
       filters: true,
       onFilter: true,
       valueType: 'select',
-      // valueEnum: StatusEnum,
+      valueEnum: StatusEnum,
     },
   ];
 
   return (
-    <ProTable<API.UserListItem>
-      // headerTitle={intl.formatMessage({
-      //   id: 'pages.searchTable.title',
-      //   defaultMessage: 'Enquiry form',
-      // })}
-      actionRef={ref}
-      // rowKey="key"
-      search={{
-        labelWidth: 80,
-      }}
-      toolBarRender={() => [
-        <Button
-          type="primary"
-          key="primary"
-          onClick={() => {
-            // handleModalVisible(true);
-          }}
-        >
-          <PlusOutlined /> <FormattedMessage id="pages.searchTable.new" defaultMessage="New" />
-        </Button>,
-      ]}
-      request={queryUserPage}
-      params={{ deptIds }}
-      columns={columns}
-      // rowSelection={{
-      //   onChange: (_, selectedRows) => {
-      //     setSelectedRows(selectedRows);
-      //   },
-      // }}
-    />
+    <div>
+      <ProTable<API.UserListItem>
+        // headerTitle={intl.formatMessage({
+        //   id: 'pages.searchTable.title',
+        //   defaultMessage: 'Enquiry form',
+        // })}
+        actionRef={ref}
+        rowKey="id"
+        search={{
+          labelWidth: 80,
+        }}
+        toolBarRender={() => [
+          <Button
+            type="primary"
+            key="primary"
+            onClick={() => {
+              setAddVisible(true);
+            }}
+          >
+            <PlusOutlined /> <FormattedMessage id="pages.searchTable.new" defaultMessage="New" />
+          </Button>,
+        ]}
+        request={queryUserPage}
+        params={{ deptIds: deptIdsVariable }}
+        columns={columns}
+        // rowSelection={{
+        //   onChange: (_, selectedRows) => {
+        //     setSelectedRows(selectedRows);
+        //   },
+        // }}
+      />
+      <AddModal
+        addVisible={addVisible}
+        cancel={() => setAddVisible(false)}
+        finished={option}
+        data={edtData as API.UserListItem}
+      />
+    </div>
   );
 };
 
@@ -202,10 +253,10 @@ const User: React.FC = () => {
     <PageContainer>
       <ProCard split="vertical">
         <ProCard colSpan="384px" ghost>
-          <DeptTree setDeptIds={setDeptIds} />
+          <DeptTree setDeptIdsFunc={setDeptIds} />
         </ProCard>
         <ProCard>
-          <UserList deptIds={deptIds} />
+          <UserList deptIdsVariable={deptIds} />
         </ProCard>
       </ProCard>
     </PageContainer>

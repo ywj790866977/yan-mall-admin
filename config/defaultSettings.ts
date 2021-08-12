@@ -17,7 +17,7 @@ const Settings: LayoutSettings & {
   fixSiderbar: true,
   //  colorWeak：true,色弱模式
   colorWeak: false,
-  title: 'yan-mall后台管理系统',
+  title: '后台管理系统',
   pwa: false,
   logo: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
   iconfontUrl: '',
