@@ -38,7 +38,8 @@ declare namespace API {
     gender: number;
     nickname?: string;
     password: string;
-    roles: string[];
+    roleIds: string[];
+    deptId: number;
   };
 
   type Role = {
@@ -46,5 +47,14 @@ declare namespace API {
     name?: string;
     status: number;
     code: string;
+  };
+
+  type Dept = {
+    id: string;
+    name: string;
+    parentId: number;
+    sort: number;
+    status: number;
+    children: Dept[];
   };
 }

@@ -6,36 +6,46 @@ import ProForm, {
   ProFormSwitch,
   ProFormText,
 } from '@ant-design/pro-form';
+import { queryRoleList } from '@/services/admin/role';
+import { queryDept } from '@/services/admin/dept';
 
 interface ModalProps {
   addVisible: boolean;
   cancel: () => void;
   finished: (values: any) => Promise<boolean | void>;
-  data: API.UserListItem;
+  data: API.User;
 }
-//
-// type RoleOptions =  {
-//   value: number;
-//   label: string;
-// }
 
 const AddModal: React.FC<ModalProps> = (prop: ModalProps) => {
   const { addVisible, cancel, finished, data } = prop;
 
-  // const convter: RoleOptions[] = (role: API.Role[]) => {
-  //   return  role.map(item => {
-  //     return{value: item.id, label: item.name}
-  //   });
-  //
-  // }
+  const getRoles: any = async () => {
+    const res = await queryRoleList();
+    if (res.code === 0) {
+      const roles = res.data;
+      return roles.map((item) => {
+        return {
+          value: item.id,
+          label: item.name,
+        };
+      });
+    }
+    return {};
+  };
 
-  // const getDept: ProFieldRequestData = async () => {
-  //   const res = await queryDeptList();
-  //   console.log(res);
-  //   const roleList: RoleOptions[] = convter(res.data)
-  //
-  //
-  // }
+  const doGetDept: any = async () => {
+    const res = await queryDept();
+    if (res.code !== 0 || !res.data || res.data.length <= 0) {
+      return null;
+    }
+    const roles = res.data;
+    return roles.map((item) => {
+      return {
+        value: item.id,
+        label: item.name,
+      };
+    });
+  };
 
   return (
     <ModalForm<{
@@ -101,18 +111,32 @@ const AddModal: React.FC<ModalProps> = (prop: ModalProps) => {
       />
 
       <ProFormSelect
-        rules={[{ required: true, message: '请输入部门!' }]}
+        rules={[{ required: true, message: '请选择用户角色!' }]}
         allowClear
         width="xl"
-        name="dept"
+        name="roleIds"
+        label="角色"
+        fieldProps={{
+          mode: 'multiple',
+        }}
+        placeholder="请选择用户角色"
+        initialValue={data ? data.roleIds : undefined}
+        request={getRoles}
+      />
+
+      <ProFormSelect
+        rules={[{ required: true, message: '请选择用户部门!' }]}
+        allowClear
+        width="xl"
+        name="deptId"
         label="部门"
-        placeholder="请输入"
-        initialValue={data ? data.mobile : undefined}
-        // request={getDept}
+        placeholder="搜索部门"
+        initialValue={data ? data.deptId : undefined}
+        request={doGetDept}
       />
 
       <ProForm.Group>
-        <ProFormSwitch name="status" label="状态" initialValue={data ? data.status : undefined} />
+        <ProFormSwitch name="status" label="状态" initialValue={data ? data.status : 0} />
       </ProForm.Group>
     </ModalForm>
   );

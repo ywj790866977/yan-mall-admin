@@ -79,7 +79,7 @@ interface UserListProps {
 const UserList: React.FC<UserListProps> = (props: UserListProps) => {
   const { deptIdsVariable } = props;
   // const [delVisible, setDelVisible] = useState<boolean>(false);
-  const [edtData, setEdtData] = useState<API.UserListItem>();
+  const [edtData, setEdtData] = useState<API.User>();
   // const [delData, setDelData] = useState<string>();
   const [addVisible, setAddVisible] = useState<boolean>(false);
 
@@ -113,8 +113,9 @@ const UserList: React.FC<UserListProps> = (props: UserListProps) => {
   };
 
   const option = async (values: any) => {
+    console.log(values);
     const params: API.User = { ...values };
-    params.status = values.status ? 1 : 0;
+    // params.status = values.status ? 1 : 0;
     if (values.id) {
       const res = await updateUser(values.id, params);
       if (res && res.code === 0) {
@@ -128,7 +129,7 @@ const UserList: React.FC<UserListProps> = (props: UserListProps) => {
     }
 
     const res = await saveUser(params);
-    // console.log("save res", params)
+    console.log('save res', res);
     if (res && res.code === 0) {
       setAddVisible(false);
       message.success('创建成功');
@@ -241,7 +242,7 @@ const UserList: React.FC<UserListProps> = (props: UserListProps) => {
         addVisible={addVisible}
         cancel={() => setAddVisible(false)}
         finished={option}
-        data={edtData as API.UserListItem}
+        data={edtData as API.User}
       />
     </div>
   );

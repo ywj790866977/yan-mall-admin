@@ -215,7 +215,7 @@ const respInterceptor: ResponseInterceptor = async (response) => {
     message.error(data.message);
     localStorage.removeItem('auth-token');
     // eslint-disable-next-line no-restricted-globals
-    // location.href = '/user/login';
+    location.href = '/user/login';
     return response;
   }
   return response;
