@@ -1,6 +1,6 @@
 import { PageContainer } from '@ant-design/pro-layout';
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Input, message, Tree } from 'antd';
+import { Button, Input, message, Popconfirm, Switch, Tree } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
@@ -8,7 +8,7 @@ import ProCard from '@ant-design/pro-card';
 import { FormattedMessage } from '@@/plugin-locale/localeExports';
 import type { DataNode, EventDataNode, Key } from 'rc-tree/lib/interface';
 import { queryDeptTree } from '@/services/admin/dept';
-import { queryPage, saveUser, updateUser } from '@/services/admin/user';
+import { queryPage, saveUser, updateUser, updateUserStatus, userInfo } from '@/services/admin/user';
 import AddModal from '@/pages/admin/User/components/AddModal';
 
 interface DeptTreeProps {
@@ -78,7 +78,7 @@ interface UserListProps {
 
 const UserList: React.FC<UserListProps> = (props: UserListProps) => {
   const { deptIdsVariable } = props;
-  // const [delVisible, setDelVisible] = useState<boolean>(false);
+  const [editType, setEditType] = useState<number>(1);
   const [edtData, setEdtData] = useState<API.User>();
   // const [delData, setDelData] = useState<string>();
   const [addVisible, setAddVisible] = useState<boolean>(false);
@@ -88,11 +88,6 @@ const UserList: React.FC<UserListProps> = (props: UserListProps) => {
   const GenderEnum = {
     0: { text: '男' },
     1: { text: '女' },
-  };
-
-  const StatusEnum = {
-    0: { text: '停用', color: '#a2a2a2' },
-    1: { text: '启用', color: '#87d068' },
   };
 
   const queryUserPage = async (param: any) => {
@@ -138,6 +133,72 @@ const UserList: React.FC<UserListProps> = (props: UserListProps) => {
     }
     message.error(res.message);
     return false;
+  };
+
+  // // 下拉操作按钮
+  // const getMenu = (record: API.UserListItem) => {
+  //   return [
+  //     {
+  //       key: '编辑',
+  //       name: (
+  //         <Menu.Item>
+  //           <Button type="link" onClick={() => {
+  //             console.log(record)
+  //           }}>
+  //             <FormattedMessage id="pages.searchTable.new" defaultMessage="New"/>
+  //           </Button>
+  //         </Menu.Item>
+  //       )
+  //     },
+  //     {
+  //       key: '删除',
+  //       name: (
+  //         <Menu.Item>
+  //           <Button type="link" onClick={() => {
+  //             console.log(record)
+  //           }}>
+  //             <FormattedMessage id="pages.searchTable.new" defaultMessage="New"/>
+  //           </Button>
+  //         </Menu.Item>
+  //       )
+  //     }
+  //   ]
+  // };
+
+  const updateStatus = async (re: API.UserListItem) => {
+    const res = await updateUserStatus(re.id, re.status === 0 ? 1 : 0);
+    if (res.code === 0) {
+      message.success('修改状态成功');
+      ref.current?.reload();
+      return;
+    }
+    message.error('修改状态失败');
+  };
+
+  const handlerUpdateUser = async (re: API.UserListItem) => {
+    if (re.id) {
+      const res = await userInfo(re.id);
+      if (res.code === 0 && res.data) {
+        setEdtData(res.data);
+        setEditType(2);
+        setAddVisible(true);
+      }
+    } else {
+      setEdtData(undefined);
+      setEditType(1);
+    }
+  };
+
+  const editCancel = () => {
+    setAddVisible(false);
+    setEditType(1);
+    setEdtData(undefined);
+  };
+
+  const add = () => {
+    setEdtData(undefined);
+    setEditType(1);
+    setAddVisible(true);
   };
 
   const columns: ProColumns<API.UserListItem>[] = [
@@ -199,10 +260,37 @@ const UserList: React.FC<UserListProps> = (props: UserListProps) => {
     {
       title: '状态',
       dataIndex: 'status',
-      filters: true,
-      onFilter: true,
-      valueType: 'select',
-      valueEnum: StatusEnum,
+      width: '100px',
+      render: (text, record) => (
+        <Popconfirm
+          title={`确定要 ${record.status ? '关闭' : '开启'} ${record.nickname} 吗?`}
+          onConfirm={() => updateStatus(record)}
+        >
+          <Switch checkedChildren="启用中" unCheckedChildren="未启用" checked={!!text} />
+        </Popconfirm>
+      ),
+    },
+    {
+      title: '操作',
+      valueType: 'option',
+      render: (text, record, _, action) => [
+        <a key="editable" onClick={() => handlerUpdateUser(record)}>
+          编辑
+        </a>,
+        <a
+          key="editable"
+          onClick={() => {
+            action?.startEditable?.(record.id);
+          }}
+        >
+          删除
+        </a>,
+        // <TableDropdown
+        //   key="actionGroup"
+        //   // onSelect={() => action?.reload()}
+        //   menus={getMenu(record)}
+        // />,
+      ],
     },
   ];
 
@@ -219,13 +307,7 @@ const UserList: React.FC<UserListProps> = (props: UserListProps) => {
           labelWidth: 80,
         }}
         toolBarRender={() => [
-          <Button
-            type="primary"
-            key="primary"
-            onClick={() => {
-              setAddVisible(true);
-            }}
-          >
+          <Button type="primary" key="primary" onClick={add}>
             <PlusOutlined /> <FormattedMessage id="pages.searchTable.new" defaultMessage="New" />
           </Button>,
         ]}
@@ -240,9 +322,10 @@ const UserList: React.FC<UserListProps> = (props: UserListProps) => {
       />
       <AddModal
         addVisible={addVisible}
-        cancel={() => setAddVisible(false)}
+        cancel={() => editCancel()}
         finished={option}
         data={edtData as API.User}
+        type={editType}
       />
     </div>
   );

@@ -7,14 +7,14 @@ declare namespace API {
     total: number;
   };
   type UserListItem = {
-    id: string;
+    id: number;
     username: string;
     nickname: string;
     gender: number;
     deptName: string;
     roleName: string;
     mobile: string;
-    status: string;
+    status: number;
     key: number;
   };
 

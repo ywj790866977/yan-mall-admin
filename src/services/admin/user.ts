@@ -37,3 +37,33 @@ export async function updateUser(id: number, params: API.User, options?: { [key:
     ...(options || {}),
   });
 }
+
+/** 更新用户 */
+export async function updateUserStatus(
+  id: number,
+  status: number,
+  options?: { [key: string]: any },
+) {
+  return request<{
+    code: number;
+    message: string;
+  }>(`/api/yan-admin/v1/user/updateStatus/${id}`, {
+    method: 'PUT',
+    data: {
+      status,
+    },
+    ...(options || {}),
+  });
+}
+
+/** 用户详情 */
+export async function userInfo(id: number, options?: { [key: string]: any }) {
+  return request<{
+    code: number;
+    data: API.User;
+    message: string;
+  }>(`/api/yan-admin/v1/user/${id}`, {
+    method: 'GET',
+    ...(options || {}),
+  });
+}
