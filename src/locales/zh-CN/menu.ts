@@ -67,4 +67,6 @@ export default {
   'menu.product.brand': '商品品牌',
   'menu.member': '会员页',
   'menu.member.list': '会员列表',
+  'menu.tool': '工具页',
+  'menu.tool.register': '注册中心',
 };

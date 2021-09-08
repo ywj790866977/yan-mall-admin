@@ -39,27 +39,27 @@
       {
         path: '/admin/menu',
         name: 'menu',
-        component: './admin/Menu'
+        component: './admin/Menu',
       },
       {
         path: '/admin/dict',
         name: 'dict',
-        component: './admin/Dict'
+        component: './admin/Dict',
       },
       {
         path: '/admin/dept',
         name: 'dept',
-        component: './admin/Dept'
+        component: './admin/Dept',
       },
       {
         path: '/admin/client',
         name: 'client',
-        component: './admin/Client'
+        component: './admin/Client',
       },
       {
         path: '/admin/role',
         name: 'role',
-        component: './admin/Role'
+        component: './admin/Role',
       },
       {
         component: './404',
@@ -74,23 +74,23 @@
       {
         path: '/product/list',
         name: 'list',
-        component: './product/List'
+        component: './product/List',
       },
       {
         path: '/product/brand',
         name: 'brand',
-        component: './product/Brand'
+        component: './product/Brand',
       },
       {
         path: '/product/category',
         name: 'category',
-        component: './product/Category'
+        component: './product/Category',
       },
       {
         path: '/product/add',
         name: 'add',
-        component: './product/Add'
-      }
+        component: './product/Add',
+      },
     ],
   },
   {
@@ -100,10 +100,10 @@
       {
         path: '/sale/advert',
         name: 'advert',
-        component: './sale/Advert'
-      }
+        component: './sale/Advert',
+      },
     ],
-    icon: 'ShoppingCart'
+    icon: 'ShoppingCart',
   },
   {
     path: '/order',
@@ -113,8 +113,8 @@
       {
         path: '/order/list',
         name: 'list',
-        component: './order/List'
-      }
+        component: './order/List',
+      },
     ],
   },
   {
@@ -125,8 +125,20 @@
       {
         path: '/member/list',
         name: 'list',
-        component: './member/List'
-      }
+        component: './member/List',
+      },
+    ],
+  },
+  {
+    path: '/tool',
+    name: 'tool',
+    icon: 'table',
+    routes: [
+      {
+        path: '/tool/register',
+        name: 'register',
+        component: './tool/Register',
+      },
     ],
   },
   {
