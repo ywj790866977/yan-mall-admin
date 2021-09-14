@@ -62,6 +62,11 @@
         component: './admin/Role',
       },
       {
+        path: '/admin/permission',
+        name: 'permission',
+        component: './admin/Permission',
+      },
+      {
         component: './404',
       },
     ],

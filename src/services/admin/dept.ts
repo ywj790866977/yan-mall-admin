@@ -3,7 +3,7 @@
 import { request } from 'umi';
 import { DataNode } from 'rc-tree/lib/interface';
 
-/** 获取卜门书 GET /api/currentUser */
+/** 获取 GET /api/currentUser */
 export async function queryDeptTree(options?: { [key: string]: any }) {
   return request<{
     code: number;

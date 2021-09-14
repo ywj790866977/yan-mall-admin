@@ -57,4 +57,45 @@ declare namespace API {
     status: number;
     children: Dept[];
   };
+
+  type RoleListItem = {
+    id: string;
+    name: string;
+    code: string;
+    status: number;
+  };
+
+  type ClientListItem = {
+    id: string;
+    clientId: string;
+    clientSecret: string;
+    scope: string;
+    autoapprove: string;
+    authorizedGrantTypes: string;
+    accessTokenValidity: string;
+  };
+
+  type PermissionListItem = {
+    id: string;
+    btnPerm: string;
+    menuId: number;
+    name: string;
+    urlPerm: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+
+  type MenuListItem = {
+    id: string;
+    name: string;
+    parentId: string;
+    routeName: string;
+    routePath: string;
+    component: string;
+    icon: string;
+    sort: number;
+    status: number;
+    createdAt: string;
+    updatedAt: string;
+  };
 }

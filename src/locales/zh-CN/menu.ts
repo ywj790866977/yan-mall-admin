@@ -54,6 +54,7 @@ export default {
   'menu.admin.dict': '字典管理',
   'menu.admin.dept': '部门管理',
   'menu.admin.role': '角色管理',
+  'menu.admin.permission': '资源管理',
   'menu.admin.client': '客户端管理',
   'menu.admin.login': '登录记录管理',
   'menu.sale': '营销页',

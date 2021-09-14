@@ -1,17 +1,20 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
-import ProCard from '@ant-design/pro-card';
 import type { ActionType, ProColumns } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
 import { queryPage, saveRole, updateRole } from '@/services/admin/role';
-import { Button, message, Tree } from 'antd';
+import { Button, message, Popconfirm, Switch } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { FormattedMessage } from '@@/plugin-locale/localeExports';
 import AddModal from '@/pages/admin/User/components/AddModal';
-import type { DataNode, EventDataNode, Key } from 'rc-tree/lib/interface';
-import { queryDeptTree } from '@/services/admin/dept';
+//
+// interface RoleEntity {
+//   id: string;
+//   name: string;
+// }
 
-const RoleList: React.FC = () => {
+const Role: React.FC = () => {
+  // const {roleSelect} = prop
   const [editType, setEditType] = useState<number>(1);
   const [edtData, setEdtData] = useState<API.User>();
   // const [delData, setDelData] = useState<string>();
@@ -19,10 +22,10 @@ const RoleList: React.FC = () => {
 
   const ref = useRef<ActionType>();
 
-  const queryUserPage = async (param: any) => {
+  const queryRolePage = async (param: any) => {
     const res = await queryPage(param);
     if (res.code === 0) {
-      const page: API.PageRes<API.UserListItem> = res.data;
+      const page: API.PageRes<API.RoleListItem> = res.data;
       return {
         success: true,
         data: page.records,
@@ -74,7 +77,7 @@ const RoleList: React.FC = () => {
   //   message.error('修改状态失败');
   // };
 
-  const handlerUpdateUser = async (re: API.UserListItem) => {
+  const handlerUpdateUser = async (re: API.RoleListItem) => {
     console.log(re);
     // if (re.id) {
     //   const res = await userInfo(re.id);
@@ -101,7 +104,11 @@ const RoleList: React.FC = () => {
     setAddVisible(true);
   };
 
-  const columns: ProColumns<API.UserListItem>[] = [
+  const updateStatus = (record: API.RoleListItem) => {
+    console.log(record);
+  };
+
+  const columns: ProColumns<API.RoleListItem>[] = [
     {
       dataIndex: 'index',
       valueType: 'indexBorder',
@@ -117,6 +124,31 @@ const RoleList: React.FC = () => {
       copyable: true,
       dataIndex: 'code',
       search: false,
+    },
+    {
+      title: '创建时间',
+      dataIndex: 'createdAt',
+      search: false,
+      valueType: 'dateTime',
+    },
+    {
+      title: '更新时间',
+      dataIndex: 'updatedAt',
+      search: false,
+      valueType: 'dateTime',
+    },
+    {
+      title: '状态',
+      dataIndex: 'status',
+      width: '100px',
+      render: (text, record) => (
+        <Popconfirm
+          title={`确定要 ${record.status ? '关闭' : '开启'} ${record.name} 吗?`}
+          onConfirm={() => updateStatus(record)}
+        >
+          <Switch checkedChildren="启用中" unCheckedChildren="未启用" checked={!!text} />
+        </Popconfirm>
+      ),
     },
     {
       title: '操作',
@@ -138,8 +170,8 @@ const RoleList: React.FC = () => {
   ];
 
   return (
-    <div>
-      <ProTable<API.UserListItem>
+    <PageContainer>
+      <ProTable<API.RoleListItem>
         actionRef={ref}
         rowKey="id"
         search={{
@@ -150,8 +182,9 @@ const RoleList: React.FC = () => {
             <PlusOutlined /> <FormattedMessage id="pages.searchTable.new" defaultMessage="New" />
           </Button>,
         ]}
-        request={queryUserPage}
+        request={queryRolePage}
         columns={columns}
+        // rowSelection={{alwaysShowAlert:true}}
       />
       <AddModal
         addVisible={addVisible}
@@ -160,87 +193,75 @@ const RoleList: React.FC = () => {
         data={edtData as API.User}
         type={editType}
       />
-    </div>
-  );
-};
-
-const MenuTree: React.FC = () => {
-  const [treeNodeData, setTreeNodeData] = useState<DataNode[]>([]);
-  // 初始化 生成一级节点
-  useEffect(() => {
-    if (treeNodeData.length === 0) {
-      queryDeptTree().then((res) => {
-        if (res.code === 0) {
-          setTreeNodeData(res.data);
-        }
-      });
-    }
-  }, [treeNodeData.length]);
-
-  const getDeptId = (deptIds: string[], node: DataNode) => {
-    deptIds.push(node.key as string);
-    if (!node.children || node.children.length === 0) {
-      return;
-    }
-    node.children.forEach((child) => {
-      getDeptId(deptIds, child);
-    });
-  };
-
-  const onSelect = async (
-    selectedKeys: Key[],
-    info: {
-      event: 'select';
-      selected: boolean;
-      node: EventDataNode;
-      selectedNodes: DataNode[];
-      nativeEvent: MouseEvent;
-    },
-  ) => {
-    if (selectedKeys.length > 0) {
-      // 获取当前选中id
-      const deptIds: string[] = [];
-      getDeptId(deptIds, info.node);
-      // setDeptIdsFunc(deptIds.join(','));
-    }
-  };
-  return (
-    <div>
-      <Tree treeData={treeNodeData} onSelect={onSelect} />
-    </div>
-  );
-};
-
-const Role: React.FC = () => {
-  // const [deptIds, setDeptIds] = useState<string>('');
-  return (
-    <PageContainer>
-      <ProCard
-        title="角色管理"
-        headerBordered
-        style={{ marginRight: 10, width: '45%', float: 'left' }}
-        bordered
-      >
-        <RoleList />
-      </ProCard>
-      <ProCard
-        title="菜单管理"
-        headerBordered
-        style={{ marginRight: 10, width: '20%', float: 'left' }}
-        bordered
-      >
-        <MenuTree />
-      </ProCard>
-      <ProCard
-        title="权限管理"
-        headerBordered
-        style={{ paddingRight: 1, width: '30%', float: 'left' }}
-        bordered
-      >
-        <MenuTree />
-      </ProCard>
     </PageContainer>
   );
 };
+
+// interface MenuTreeProp {
+//   role: RoleEntity;
+//   menuSelect: (s: Key[]) => void;
+// }
+//
+// const MenuTree: React.FC<MenuTreeProp> = (prop: MenuTreeProp) => {
+//   const {role, menuSelect} = prop;
+//   const [treeNodeData, setTreeNodeData] = useState<DataNode[]>([]);
+//   // 初始化 生成一级节点
+//   useEffect(() => {
+//     if (treeNodeData.length === 0) {
+//       queryMenuTree().then((res) => {
+//         if (res.code === 0) {
+//           setTreeNodeData(res.data);
+//         }
+//       });
+//     }
+//   }, [treeNodeData.length]);
+//
+//   const getDeptId = (deptIds: string[], node: DataNode) => {
+//     deptIds.push(node.key as string);
+//     if (!node.children || node.children.length === 0) {
+//       return;
+//     }
+//     node.children.forEach((child) => {
+//       getDeptId(deptIds, child);
+//     });
+//   };
+//
+//   const onSelect = async (
+//     selectedKeys: Key[],
+//     info: {
+//       event: 'select';
+//       selected: boolean;
+//       node: EventDataNode;
+//       selectedNodes: DataNode[];
+//       nativeEvent: MouseEvent;
+//     },
+//   ) => {
+//     if (selectedKeys.length > 0) {
+//       // 获取当前选中id
+//       const deptIds: string[] = [];
+//       getDeptId(deptIds, info.node);
+//       menuSelect(selectedKeys);
+//     }
+//   };
+//   return (
+//     <div>
+//       {role != null ?
+//         <Tag style={{marginBottom: '10px'}} color="processing">
+//           {role.name}
+//         </Tag>
+//         :
+//         <Tag style={{marginBottom: '10px'}} color="warning">
+//           请选择角色!
+//         </Tag>
+//       }
+//       <Tree checkable treeData={treeNodeData} onSelect={onSelect}/>
+//
+//       <Button type="primary" style={{float: "right", marginTop: "20px"}}>
+//         提交
+//       </Button>
+//     </div>
+//   );
+// };
+//
 
 export default Role;

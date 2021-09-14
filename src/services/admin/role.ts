@@ -17,7 +17,7 @@ export async function queryRoleList(options?: { [key: string]: any }) {
 export async function queryPage(params: any, options?: { [key: string]: any }) {
   return request<{
     code: number;
-    data: API.PageRes<API.UserListItem>;
+    data: API.PageRes<API.RoleListItem>;
   }>('/api/yan-admin/v1/role/page', {
     method: 'GET',
     params,

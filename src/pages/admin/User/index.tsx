@@ -336,7 +336,7 @@ const User: React.FC = () => {
   return (
     <PageContainer>
       <ProCard split="vertical">
-        <ProCard colSpan="384px" ghost>
+        <ProCard colSpan="320px" ghost>
           <DeptTree setDeptIdsFunc={setDeptIds} />
         </ProCard>
         <ProCard>
