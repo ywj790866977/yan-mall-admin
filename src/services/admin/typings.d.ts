@@ -98,4 +98,14 @@ declare namespace API {
     createdAt: string;
     updatedAt: string;
   };
+
+  type DictListItem = {
+    id: string;
+    name: string;
+    code: string;
+    remark: string;
+    status: number;
+    createdAt: string;
+    updatedAt: string;
+  };
 }

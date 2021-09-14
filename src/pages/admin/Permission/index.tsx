@@ -105,7 +105,6 @@ const Permission: React.FC = () => {
     },
     {
       title: '权限名称',
-      copyable: true,
       dataIndex: 'name',
     },
     {
@@ -116,8 +115,19 @@ const Permission: React.FC = () => {
     },
     {
       title: '按钮权限表示',
-      copyable: true,
       dataIndex: 'btnPerm',
+      search: false,
+    },
+    {
+      title: '创建时间',
+      dataIndex: 'createdAt',
+      valueType: 'dateTime',
+      search: false,
+    },
+    {
+      title: '更新时间',
+      dataIndex: 'updatedAt',
+      valueType: 'dateTime',
       search: false,
     },
     {

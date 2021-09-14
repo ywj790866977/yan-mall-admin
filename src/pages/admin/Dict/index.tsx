@@ -1,21 +1,21 @@
 import React, { useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
-import { queryClientPage } from '@/services/admin/client';
 import { Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { FormattedMessage } from '@@/plugin-locale/localeExports';
-import AddModal from '@/pages/admin/Client/components/AddModal';
+import AddModal from '@/pages/admin/Dict/components/AddModal';
+import { queryDictPage } from '@/services/admin/dict';
 
 const Dict: React.FC = () => {
   const [editType, setEditType] = useState<number>(1);
-  const [edtData, setEdtData] = useState<API.ClientListItem>();
+  const [edtData, setEdtData] = useState<API.DictListItem>();
   // const [delData, setDelData] = useState<string>();
   const [addVisible, setAddVisible] = useState<boolean>(false);
 
   const ref = useRef<ActionType>();
 
-  const handlerUpdate = (record: API.ClientListItem) => {
+  const handlerUpdate = (record: API.DictListItem) => {
     console.log(record);
     setEdtData(record);
   };
@@ -33,9 +33,9 @@ const Dict: React.FC = () => {
   };
 
   const queryDataPage = async (param: any) => {
-    const res = await queryClientPage(param);
+    const res = await queryDictPage(param);
     if (res.code === 0) {
-      const page: API.PageRes<API.ClientListItem> = res.data;
+      const page: API.PageRes<API.DictListItem> = res.data;
       return {
         success: true,
         data: page.records,
@@ -48,7 +48,7 @@ const Dict: React.FC = () => {
       success: false,
     };
   };
-  const columns: ProColumns<API.ClientListItem>[] = [
+  const columns: ProColumns<API.DictListItem>[] = [
     {
       dataIndex: 'index',
       valueType: 'indexBorder',
@@ -72,12 +72,12 @@ const Dict: React.FC = () => {
     {
       title: '字典名称',
       dataIndex: 'name',
-      search: false,
+      copyable: true,
     },
     {
       title: '字典编码',
       dataIndex: 'code',
-      search: false,
+      copyable: true,
     },
     {
       title: '备注',
@@ -87,21 +87,15 @@ const Dict: React.FC = () => {
     {
       title: '创建时间',
       dataIndex: 'createdAt',
-      valueType: 'dateTimeRange',
+      valueType: 'dateTime',
       search: false,
     },
     {
       title: '更新时间',
       dataIndex: 'updatedAt',
-      valueType: 'dateTimeRange',
+      valueType: 'dateTime',
       search: false,
     },
-    {
-      title: '刷新令牌时效(单位:秒)',
-      dataIndex: 'refreshTokenValidity',
-      search: false,
-    },
-
     {
       title: '操作',
       valueType: 'option',
@@ -123,7 +117,7 @@ const Dict: React.FC = () => {
 
   return (
     <div>
-      <ProTable<API.ClientListItem>
+      <ProTable<API.DictListItem>
         actionRef={ref}
         rowKey="id"
         search={{
@@ -147,7 +141,7 @@ const Dict: React.FC = () => {
         addVisible={addVisible}
         cancel={() => editCancel()}
         finished={option}
-        data={edtData as API.ClientListItem}
+        data={edtData as API.DictListItem}
         type={editType}
       />
     </div>
