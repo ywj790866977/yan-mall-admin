@@ -1,21 +1,21 @@
 import React, { useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
-import { Button } from 'antd';
+import { Button, Image } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { FormattedMessage } from '@@/plugin-locale/localeExports';
-import AddModal from '@/pages/admin/Client/components/AddModal';
-import { queryClientPage } from '@/services/admin/client';
+import AddModal from '@/pages/goods/Brand/components/AddModal';
+import { queryBrandPage } from '@/services/goods/brand';
 
 const Brand: React.FC = () => {
   const [editType, setEditType] = useState<number>(1);
-  const [edtData, setEdtData] = useState<API.ClientListItem>();
+  const [edtData, setEdtData] = useState<API.BrandListItem>();
   // const [delData, setDelData] = useState<string>();
   const [addVisible, setAddVisible] = useState<boolean>(false);
 
   const ref = useRef<ActionType>();
 
-  const handlerUpdate = (record: API.ClientListItem) => {
+  const handlerUpdate = (record: API.BrandListItem) => {
     console.log(record);
     setEdtData(record);
   };
@@ -33,9 +33,9 @@ const Brand: React.FC = () => {
   };
 
   const queryDataPage = async (param: any) => {
-    const res = await queryClientPage(param);
+    const res = await queryBrandPage(param);
     if (res.code === 0) {
-      const page: API.PageRes<API.ClientListItem> = res.data;
+      const page: API.PageRes<API.BrandListItem> = res.data;
       return {
         success: true,
         data: page.records,
@@ -48,15 +48,14 @@ const Brand: React.FC = () => {
       success: false,
     };
   };
-  const columns: ProColumns<API.ClientListItem>[] = [
+  const columns: ProColumns<API.BrandListItem>[] = [
     {
-      dataIndex: 'index',
-      valueType: 'indexBorder',
+      dataIndex: 'id',
       width: '5%',
     },
     {
-      title: '客户端Id',
-      dataIndex: 'clientId',
+      title: '名称',
+      dataIndex: 'name',
       copyable: true,
       ellipsis: true,
       tip: '标题过长会自动收缩',
@@ -70,36 +69,31 @@ const Brand: React.FC = () => {
       },
     },
     {
-      title: '客户端秘钥',
-      dataIndex: 'clientSecret',
+      title: 'logo图片',
+      dataIndex: 'logoUrl',
+      search: false,
+      width: '15%',
+      render: (node, re) => {
+        return <Image width={100} src={re.logoUrl} />;
+      },
+    },
+    {
+      title: '排序',
+      dataIndex: 'sort',
       search: false,
     },
     {
-      title: '域',
-      dataIndex: 'scope',
+      title: '创建时间',
+      dataIndex: 'createdAt',
+      valueType: 'dateTime',
       search: false,
     },
     {
-      title: '自动放行',
-      dataIndex: 'autoapprove',
+      title: '更新时间时间',
+      dataIndex: 'updatedAt',
+      valueType: 'dateTime',
       search: false,
     },
-    {
-      title: '授权方式',
-      dataIndex: 'authorizedGrantTypes',
-      search: false,
-    },
-    {
-      title: '认证令牌时效(单位:秒)',
-      dataIndex: 'accessTokenValidity',
-      search: false,
-    },
-    {
-      title: '刷新令牌时效(单位:秒)',
-      dataIndex: 'refreshTokenValidity',
-      search: false,
-    },
-
     {
       title: '操作',
       valueType: 'option',
@@ -121,7 +115,7 @@ const Brand: React.FC = () => {
 
   return (
     <div>
-      <ProTable<API.ClientListItem>
+      <ProTable<API.BrandListItem>
         actionRef={ref}
         rowKey="id"
         search={{
@@ -145,7 +139,7 @@ const Brand: React.FC = () => {
         addVisible={addVisible}
         cancel={() => editCancel()}
         finished={option}
-        data={edtData as API.ClientListItem}
+        data={edtData as API.BrandListItem}
         type={editType}
       />
     </div>

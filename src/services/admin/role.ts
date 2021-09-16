@@ -7,7 +7,7 @@ export async function queryRoleList(options?: { [key: string]: any }) {
   return request<{
     code: number;
     data: API.Role[];
-  }>('/api/yan-admin/v1/role/list', {
+  }>('/api/admin/v1/role/list', {
     method: 'GET',
     ...(options || {}),
   });
@@ -18,7 +18,7 @@ export async function queryPage(params: any, options?: { [key: string]: any }) {
   return request<{
     code: number;
     data: API.PageRes<API.RoleListItem>;
-  }>('/api/yan-admin/v1/role/page', {
+  }>('/api/admin/v1/role/page', {
     method: 'GET',
     params,
     ...(options || {}),
@@ -30,7 +30,7 @@ export async function saveRole(params: API.User, options?: { [key: string]: any 
   return request<{
     code: number;
     message: string;
-  }>('/api/yan-admin/v1/role', {
+  }>('/api/admin/v1/role', {
     method: 'POST',
     data: params,
     ...(options || {}),
@@ -42,7 +42,7 @@ export async function updateRole(id: number, params: API.User, options?: { [key:
   return request<{
     code: number;
     message: string;
-  }>(`/api/yan-admin/v1/role/${id}`, {
+  }>(`/api/admin/v1/role/${id}`, {
     method: 'PUT',
     data: params,
     ...(options || {}),

@@ -7,7 +7,7 @@ export async function queryPermissionPage(options?: { [key: string]: any }) {
   return request<{
     code: number;
     data: API.PageRes<API.PermissionListItem>;
-  }>('/api/yan-admin/v1/permission/page', {
+  }>('/api/admin/v1/permission/page', {
     method: 'GET',
     ...(options || {}),
   });

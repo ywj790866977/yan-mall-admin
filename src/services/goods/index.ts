@@ -1,8 +1,8 @@
 // @ts-ignore
 /* eslint-disable */
 
-import * as product from './product';
+import * as goods from './goods';
 
 export default {
-  product,
+  goods,
 };

@@ -8,7 +8,7 @@ import { DataNode } from 'rc-tree/lib/interface';
 export async function queryRoutes(options?: { [key: string]: any }) {
   return request<{
     data: MenuDataItem[];
-  }>('/api/yan-admin/v1/menu/routes', {
+  }>('/api/admin/v1/menu/routes', {
     method: 'GET',
     ...(options || {}),
   });
@@ -19,7 +19,7 @@ export async function queryMenuTree(options?: { [key: string]: any }) {
   return request<{
     code: number;
     data: DataNode[];
-  }>('/api/yan-admin/v1/menu/menuTree', {
+  }>('/api/admin/v1/menu/menuTree', {
     method: 'GET',
     ...(options || {}),
   });
@@ -30,7 +30,7 @@ export async function queryMenuPage(params: any, options?: { [key: string]: any 
   return request<{
     code: number;
     data: API.PageRes<API.MenuListItem>;
-  }>('/api/yan-admin/v1/menu/page', {
+  }>('/api/admin/v1/menu/page', {
     method: 'GET',
     params,
     ...(options || {}),

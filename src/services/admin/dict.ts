@@ -7,7 +7,7 @@ export async function queryDictPage(params: any, options?: { [key: string]: any 
   return request<{
     code: number;
     data: API.PageRes<API.DictListItem>;
-  }>('/api/yan-admin/v1/dict/page', {
+  }>('/api/admin/v1/dict/page', {
     method: 'GET',
     params,
     ...(options || {}),

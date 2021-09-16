@@ -7,7 +7,7 @@ export async function queryPage(params: any, options?: { [key: string]: any }) {
   return request<{
     code: number;
     data: API.PageRes<API.UserListItem>;
-  }>('/api/yan-admin/v1/user/page', {
+  }>('/api/admin/v1/user/page', {
     method: 'GET',
     params,
     ...(options || {}),
@@ -19,7 +19,7 @@ export async function saveUser(params: API.User, options?: { [key: string]: any 
   return request<{
     code: number;
     message: string;
-  }>('/api/yan-admin/v1/user', {
+  }>('/api/admin/v1/user', {
     method: 'POST',
     data: params,
     ...(options || {}),
@@ -31,7 +31,7 @@ export async function updateUser(id: number, params: API.User, options?: { [key:
   return request<{
     code: number;
     message: string;
-  }>(`/api/yan-admin/v1/user/${id}`, {
+  }>(`/api/admin/v1/user/${id}`, {
     method: 'PUT',
     data: params,
     ...(options || {}),
@@ -47,7 +47,7 @@ export async function updateUserStatus(
   return request<{
     code: number;
     message: string;
-  }>(`/api/yan-admin/v1/user/updateStatus/${id}`, {
+  }>(`/api/admin/v1/user/updateStatus/${id}`, {
     method: 'PUT',
     data: {
       status,
@@ -62,7 +62,7 @@ export async function userInfo(id: number, options?: { [key: string]: any }) {
     code: number;
     data: API.User;
     message: string;
-  }>(`/api/yan-admin/v1/user/${id}`, {
+  }>(`/api/admin/v1/user/${id}`, {
     method: 'GET',
     ...(options || {}),
   });

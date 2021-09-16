@@ -7,7 +7,7 @@ export async function queryClientPage(params: any, options?: { [key: string]: an
   return request<{
     code: number;
     data: API.PageRes<API.ClientListItem>;
-  }>('/api/yan-admin/v1/oauthClient/page', {
+  }>('/api/admin/v1/oauthClient/page', {
     method: 'GET',
     params,
     ...(options || {}),
