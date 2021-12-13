@@ -118,6 +118,7 @@ declare namespace API {
     status: number;
     createdAt: string;
     updatedAt: string;
+    children: DeptListItem[];
   };
 
   type Menu = {

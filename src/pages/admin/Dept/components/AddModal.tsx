@@ -7,12 +7,10 @@ interface ModalProps {
   finished: (values: any) => Promise<boolean | void>;
   data: API.DeptListItem;
   type: number;
-  deptId: string | number;
 }
 
 const AddModal: React.FC<ModalProps> = (prop: ModalProps) => {
-  const { addVisible, cancel, finished, data, type, deptId } = prop;
-  console.log(deptId);
+  const { addVisible, cancel, finished, data, type } = prop;
 
   return (
     <ModalForm<{
