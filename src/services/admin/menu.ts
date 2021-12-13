@@ -36,3 +36,67 @@ export async function queryMenuPage(params: any, options?: { [key: string]: any 
     ...(options || {}),
   });
 }
+
+/** list GET */
+export async function queryList(options?: { [key: string]: any }) {
+  return request<{
+    code: number;
+    data: API.MenuListItem[];
+  }>('/api/admin/v1/menu/list', {
+    method: 'GET',
+    ...(options || {}),
+  });
+}
+
+/** 更新状态 */
+export async function updateMenuStatus(
+  id: string,
+  status: number,
+  options?: { [key: string]: any },
+) {
+  return request<{
+    code: number;
+    message: string;
+  }>(`/api/admin/v1/menu/updateStatus/${id}`, {
+    method: 'PUT',
+    data: {
+      status,
+    },
+    ...(options || {}),
+  });
+}
+
+/** 更新状态 */
+export async function deleteMenu(id: string, options?: { [key: string]: any }) {
+  return request<{
+    code: number;
+    message: string;
+  }>(`/api/admin/v1/menu/${id}`, {
+    method: 'DELETE',
+    ...(options || {}),
+  });
+}
+
+/** 更新 PUT */
+export async function updateMenu(id: string, data: API.Menu, options?: { [key: string]: any }) {
+  return request<{
+    code: number;
+    message: string;
+  }>(`/api/admin/v1/menu/${id}`, {
+    method: 'PUT',
+    data,
+    ...(options || {}),
+  });
+}
+
+/** 更新 PUT */
+export async function saveMenu(data: API.Menu, options?: { [key: string]: any }) {
+  return request<{
+    code: number;
+    message: string;
+  }>(`/api/admin/v1/menu/`, {
+    method: 'POST',
+    data,
+    ...(options || {}),
+  });
+}

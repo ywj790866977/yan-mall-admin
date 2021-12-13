@@ -38,7 +38,7 @@ export async function updateUser(id: number, params: API.User, options?: { [key:
   });
 }
 
-/** 更新用户 */
+/** 更新状态 */
 export async function updateUserStatus(
   id: number,
   status: number,

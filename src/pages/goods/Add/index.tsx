@@ -1,8 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import type { ProFormInstance } from '@ant-design/pro-form';
-import ProForm, {
-  ProFormCheckbox,
-  ProFormDatePicker,
+import {
   ProFormDigit,
   ProFormSelect,
   ProFormText,
@@ -13,10 +11,13 @@ import ProForm, {
 import ProCard from '@ant-design/pro-card';
 import { message, TreeSelect } from 'antd';
 import { PageContainer } from '@ant-design/pro-layout';
-import { DataNode } from 'rc-tree/lib/interface';
+import type { DataNode } from 'rc-tree/lib/interface';
 import { queryMenuTree } from '@/services/admin/menu';
 import ProFormItem from '@ant-design/pro-form/es/components/FormItem';
-import DpEditor, { DpEditorValueState } from '@/pages/goods/Add/components/DpEditor';
+import type { DpEditorValueState } from '@/pages/goods/Add/components/DpEditor';
+import DpEditor from '@/pages/goods/Add/components/DpEditor';
+import GoodsAttr from '@/pages/goods/Add/components/GoodsAttr';
+import GoodsSpec from '@/pages/goods/Add/components/GoodsSpec';
 
 const Add: React.FC = () => {
   const formRef = useRef<ProFormInstance>();
@@ -62,7 +63,9 @@ const Add: React.FC = () => {
               return true;
             }}
           >
-            <ProFormItem name="111" label="品牌" rules={[{ required: true }]}>
+            <ProFormItem
+            // name="111" label="品牌" rules={[{ required: true }]}
+            >
               <TreeSelect style={{ width: '45%' }} treeData={treeNodeData} />
             </ProFormItem>
             <ProFormText
@@ -71,13 +74,13 @@ const Add: React.FC = () => {
               width="md"
               tooltip="最长为 24 位，用于标定的唯一 id"
               placeholder="请输入名称"
-              rules={[{ required: true }]}
+              // rules={[{ required: true }]}
             />
             <ProFormSelect
               label="商品品牌"
               name="brand"
               width="md"
-              rules={[{ required: true }]}
+              // rules={[{ required: true }]}
               initialValue="1"
               options={[
                 { value: '1', label: '苹果' },
@@ -91,14 +94,14 @@ const Add: React.FC = () => {
               label="商品原价"
               width="md"
               placeholder="请输入原价"
-              rules={[{ required: true }]}
+              // rules={[{ required: true }]}
             />
             <ProFormDigit
               name="price"
               label="商品现价"
               width="md"
               placeholder="请输入现价"
-              rules={[{ required: true }]}
+              // rules={[{ required: true }]}
             />
 
             <ProFormTextArea name="description" label="描述" width="lg" placeholder="请输入描述" />
@@ -121,74 +124,22 @@ const Add: React.FC = () => {
             checkbox: string;
           }>
             name="checkbox"
-            title="设置参数"
+            title="设置属性"
             onFinish={async () => {
               console.log(formRef.current?.getFieldsValue());
               return true;
             }}
           >
-            <ProFormCheckbox.Group
-              name="checkbox"
-              label="迁移类型"
-              width="lg"
-              options={['结构迁移', '全量迁移', '增量迁移', '全量校验']}
-            />
-            <ProForm.Group>
-              <ProFormText name="dbname" label="业务 DB 用户名" />
-              <ProFormDatePicker name="datetime" label="记录保存时间" width="sm" />
-              <ProFormCheckbox.Group
-                name="checkbox"
-                label="迁移类型"
-                options={['完整 LOB', '不同步 LOB', '受限制 LOB']}
-              />
-            </ProForm.Group>
+            <GoodsAttr />
           </StepsForm.StepForm>
           <StepsForm.StepForm
             name="time"
-            title="发布实验"
-            stepProps={{
-              description: '这里填入发布判断',
-            }}
+            title="设置规格"
+            // stepProps={{
+            //   description: '这里填入发布判断',
+            // }}
           >
-            <ProFormCheckbox.Group
-              name="checkbox"
-              label="部署单元"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-              options={['部署单元1', '部署单元2', '部署单元3']}
-            />
-            <ProFormSelect
-              label="部署分组策略"
-              name="remark"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-              initialValue="1"
-              options={[
-                {
-                  value: '1',
-                  label: '策略一',
-                },
-                { value: '2', label: '策略二' },
-              ]}
-            />
-            <ProFormSelect
-              label="Pod 调度策略"
-              name="remark2"
-              initialValue="2"
-              options={[
-                {
-                  value: '1',
-                  label: '策略一',
-                },
-                { value: '2', label: '策略二' },
-              ]}
-            />
+            <GoodsSpec />
           </StepsForm.StepForm>
         </StepsForm>
       </ProCard>

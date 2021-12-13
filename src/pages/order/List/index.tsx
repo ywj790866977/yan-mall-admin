@@ -4,18 +4,18 @@ import ProTable from '@ant-design/pro-table';
 import { Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { FormattedMessage } from '@@/plugin-locale/localeExports';
-import AddModal from '@/pages/admin/Client/components/AddModal';
-import { queryClientPage } from '@/services/admin/client';
+import AddModal from '@/pages/order/List/components/AddModal';
+import { queryOrderPage } from '@/services/order/order';
 
 const List: React.FC = () => {
   const [editType, setEditType] = useState<number>(1);
-  const [edtData, setEdtData] = useState<API.ClientListItem>();
+  const [edtData, setEdtData] = useState<API.OrderListItem>();
   // const [delData, setDelData] = useState<string>();
   const [addVisible, setAddVisible] = useState<boolean>(false);
 
   const ref = useRef<ActionType>();
 
-  const handlerUpdate = (record: API.ClientListItem) => {
+  const handlerUpdate = (record: API.OrderListItem) => {
     console.log(record);
     setEdtData(record);
   };
@@ -33,9 +33,9 @@ const List: React.FC = () => {
   };
 
   const queryDataPage = async (param: any) => {
-    const res = await queryClientPage(param);
+    const res = await queryOrderPage(param);
     if (res.code === 0) {
-      const page: API.PageRes<API.ClientListItem> = res.data;
+      const page: API.PageRes<API.OrderListItem> = res.data;
       return {
         success: true,
         data: page.records,
@@ -48,15 +48,15 @@ const List: React.FC = () => {
       success: false,
     };
   };
-  const columns: ProColumns<API.ClientListItem>[] = [
+  const columns: ProColumns<API.OrderListItem>[] = [
     {
       dataIndex: 'index',
       valueType: 'indexBorder',
       width: '5%',
     },
     {
-      title: '客户端Id',
-      dataIndex: 'clientId',
+      title: '订单号',
+      dataIndex: 'orderSn',
       copyable: true,
       ellipsis: true,
       tip: '标题过长会自动收缩',
@@ -70,13 +70,18 @@ const List: React.FC = () => {
       },
     },
     {
-      title: '客户端秘钥',
-      dataIndex: 'clientSecret',
+      title: '商品',
+      dataIndex: 'orderItemList',
       search: false,
     },
     {
-      title: '域',
-      dataIndex: 'scope',
+      title: '会员Id',
+      dataIndex: 'memberId',
+      search: false,
+    },
+    {
+      title: '手机号',
+      dataIndex: 'mobile',
       search: false,
     },
     {
@@ -121,7 +126,7 @@ const List: React.FC = () => {
 
   return (
     <div>
-      <ProTable<API.ClientListItem>
+      <ProTable<API.OrderListItem>
         actionRef={ref}
         rowKey="id"
         search={{
@@ -145,7 +150,7 @@ const List: React.FC = () => {
         addVisible={addVisible}
         cancel={() => editCancel()}
         finished={option}
-        data={edtData as API.ClientListItem}
+        data={edtData as API.OrderListItem}
         type={editType}
       />
     </div>

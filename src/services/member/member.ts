@@ -3,11 +3,11 @@
 import { request } from 'umi';
 
 /** 获取 GET */
-export async function queryGoodsPage(params: any, options?: { [key: string]: any }) {
+export async function queryMemberPage(params: any, options?: { [key: string]: any }) {
   return request<{
     code: number;
-    data: API.PageRes<API.GoodsListItem>;
-  }>('/api/goods/admin/v1/goods/page', {
+    data: API.PageRes<API.MemberListItem>;
+  }>('/api/member/admin/v1/member/page', {
     method: 'GET',
     params,
     ...(options || {}),

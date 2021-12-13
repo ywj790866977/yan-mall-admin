@@ -32,15 +32,7 @@ const Product: React.FC = () => {
       dataIndex: 'id',
       width: '5%',
     },
-    {
-      title: '图片',
-      dataIndex: 'picUrl',
-      search: false,
-      width: '15%',
-      render: (node, re) => {
-        return <Image width={100} src={re.picUrl} />;
-      },
-    },
+
     {
       title: '名称',
       dataIndex: 'name',
@@ -53,6 +45,15 @@ const Product: React.FC = () => {
             message: '此项为必填项',
           },
         ],
+      },
+    },
+    {
+      title: '图片',
+      dataIndex: 'picUrl',
+      search: false,
+      width: '15%',
+      render: (node, re) => {
+        return <Image width={100} src={re.picUrl} />;
       },
     },
     {

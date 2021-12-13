@@ -97,6 +97,7 @@ declare namespace API {
     status: number;
     createdAt: string;
     updatedAt: string;
+    children: API.MenuListItem[];
   };
 
   type DictListItem = {
@@ -104,6 +105,30 @@ declare namespace API {
     name: string;
     code: string;
     remark: string;
+    status: number;
+    createdAt: string;
+    updatedAt: string;
+  };
+
+  type DeptListItem = {
+    id: string;
+    name: string;
+    parentId: string;
+    sort: number;
+    status: number;
+    createdAt: string;
+    updatedAt: string;
+  };
+
+  type Menu = {
+    id: string;
+    name: string;
+    parentId: string;
+    routeName: string;
+    routePath: string;
+    component: string;
+    icon: string;
+    sort: number;
     status: number;
     createdAt: string;
     updatedAt: string;

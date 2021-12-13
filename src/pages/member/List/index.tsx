@@ -1,21 +1,21 @@
 import React, { useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
-import { Button } from 'antd';
+import { Button, Image } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { FormattedMessage } from '@@/plugin-locale/localeExports';
-import AddModal from '@/pages/admin/Client/components/AddModal';
-import { queryClientPage } from '@/services/admin/client';
+import AddModal from '@/pages/member/List/components/AddModal';
+import { queryMemberPage } from '@/services/member/member';
 
 const List: React.FC = () => {
   const [editType, setEditType] = useState<number>(1);
-  const [edtData, setEdtData] = useState<API.ClientListItem>();
+  const [edtData, setEdtData] = useState<API.MemberListItem>();
   // const [delData, setDelData] = useState<string>();
   const [addVisible, setAddVisible] = useState<boolean>(false);
 
   const ref = useRef<ActionType>();
 
-  const handlerUpdate = (record: API.ClientListItem) => {
+  const handlerUpdate = (record: API.MemberListItem) => {
     console.log(record);
     setEdtData(record);
   };
@@ -33,9 +33,9 @@ const List: React.FC = () => {
   };
 
   const queryDataPage = async (param: any) => {
-    const res = await queryClientPage(param);
+    const res = await queryMemberPage(param);
     if (res.code === 0) {
-      const page: API.PageRes<API.ClientListItem> = res.data;
+      const page: API.PageRes<API.MemberListItem> = res.data;
       return {
         success: true,
         data: page.records,
@@ -48,15 +48,15 @@ const List: React.FC = () => {
       success: false,
     };
   };
-  const columns: ProColumns<API.ClientListItem>[] = [
+  const columns: ProColumns<API.MemberListItem>[] = [
     {
-      dataIndex: 'index',
-      valueType: 'indexBorder',
+      title: 'ID',
+      dataIndex: 'id',
       width: '5%',
     },
     {
-      title: '客户端Id',
-      dataIndex: 'clientId',
+      title: '昵称',
+      dataIndex: 'nickName',
       copyable: true,
       ellipsis: true,
       tip: '标题过长会自动收缩',
@@ -70,36 +70,40 @@ const List: React.FC = () => {
       },
     },
     {
-      title: '客户端秘钥',
-      dataIndex: 'clientSecret',
+      title: '性别',
+      dataIndex: 'gender',
       search: false,
     },
     {
-      title: '域',
-      dataIndex: 'scope',
+      title: '头像',
+      dataIndex: 'avatarUrl',
+      search: false,
+      render: (node, re) => {
+        return <Image width={100} src={re.avatarUrl} />;
+      },
+    },
+    {
+      title: '手机号码',
+      dataIndex: 'mobile',
       search: false,
     },
     {
-      title: '自动放行',
-      dataIndex: 'autoapprove',
+      title: '生日',
+      dataIndex: 'birthday',
       search: false,
     },
     {
-      title: '授权方式',
-      dataIndex: 'authorizedGrantTypes',
+      title: '创建时间',
+      dataIndex: 'createdAt',
+      valueType: 'dateTime',
       search: false,
     },
     {
-      title: '认证令牌时效(单位:秒)',
-      dataIndex: 'accessTokenValidity',
+      title: '更新时间',
+      dataIndex: 'updatedAt',
+      valueType: 'dateTime',
       search: false,
     },
-    {
-      title: '刷新令牌时效(单位:秒)',
-      dataIndex: 'refreshTokenValidity',
-      search: false,
-    },
-
     {
       title: '操作',
       valueType: 'option',
@@ -121,7 +125,7 @@ const List: React.FC = () => {
 
   return (
     <div>
-      <ProTable<API.ClientListItem>
+      <ProTable<API.MemberListItem>
         actionRef={ref}
         rowKey="id"
         search={{
@@ -145,7 +149,7 @@ const List: React.FC = () => {
         addVisible={addVisible}
         cancel={() => editCancel()}
         finished={option}
-        data={edtData as API.ClientListItem}
+        data={edtData as API.MemberListItem}
         type={editType}
       />
     </div>
