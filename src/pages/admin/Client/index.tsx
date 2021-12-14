@@ -1,11 +1,12 @@
 import React, { useRef, useState } from 'react';
 import type { ActionType, ProColumns } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
-import { Button } from 'antd';
+import { Button, message, Popconfirm } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { FormattedMessage } from '@@/plugin-locale/localeExports';
 import AddModal from '@/pages/admin/Client/components/AddModal';
-import { queryClientPage } from '@/services/admin/client';
+import { queryClientPage, save, update } from '@/services/admin/client';
+import { remove } from '@/services/admin/dict';
 
 const Client: React.FC = () => {
   const [editType, setEditType] = useState<number>(1);
@@ -16,20 +17,65 @@ const Client: React.FC = () => {
   const ref = useRef<ActionType>();
 
   const handlerUpdate = (record: API.ClientListItem) => {
-    console.log(record);
-    setEdtData(record);
+    console.log('update', record);
+    if (record.id) {
+      setEdtData(record);
+      setEditType(2);
+      setAddVisible(true);
+    } else {
+      setEdtData(undefined);
+      setEditType(1);
+    }
+  };
+
+  const editCancel = () => {
+    setAddVisible(false);
+    setEditType(1);
+    setEdtData(undefined);
   };
 
   const add = () => {
-    setAddVisible(true);
+    setEdtData(undefined);
     setEditType(1);
+    setAddVisible(true);
   };
-
-  const editCancel = () => {};
 
   const option = async (values: any) => {
     console.log(values);
+    const params: API.ClientListItem = { ...values };
+    // params.status = values.status ? 1 : 0;
+    if (values.id) {
+      const res = await update(values.id, params);
+      if (res && res.code === 0) {
+        setAddVisible(false);
+        setEdtData(undefined);
+        message.success('修改成功');
+        return true;
+      }
+      message.error(res.message);
+      return false;
+    }
+
+    const res = await save(params);
+    console.log('save res', res);
+    if (res && res.code === 0) {
+      setAddVisible(false);
+      message.success('创建成功');
+      ref.current?.reload();
+      return true;
+    }
+    message.error(res.message);
     return false;
+  };
+
+  const deleteClient = async (record: API.ClientListItem) => {
+    const res = await remove(record.id);
+    if (res.code === 0) {
+      message.success('删除成功!');
+      ref.current?.reload();
+      return;
+    }
+    message.error(res.message);
   };
 
   const queryDataPage = async (param: any) => {
@@ -50,12 +96,12 @@ const Client: React.FC = () => {
   };
   const columns: ProColumns<API.ClientListItem>[] = [
     {
-      dataIndex: 'index',
-      valueType: 'indexBorder',
+      title: 'ID',
+      dataIndex: 'id',
       width: '5%',
     },
     {
-      title: '客户端Id',
+      title: '客户端ID',
       dataIndex: 'clientId',
       copyable: true,
       ellipsis: true,
@@ -103,18 +149,16 @@ const Client: React.FC = () => {
     {
       title: '操作',
       valueType: 'option',
-      render: (text, record, _, action) => [
+      render: (text, record) => [
         <a key="editable" onClick={() => handlerUpdate(record)}>
           编辑
         </a>,
-        <a
-          key="editable"
-          onClick={() => {
-            action?.startEditable?.(record.id);
-          }}
+        <Popconfirm
+          title={`确定要删除 ${record.clientId} 吗?`}
+          onConfirm={() => deleteClient(record)}
         >
-          删除
-        </a>,
+          <a key="editable">删除</a>
+        </Popconfirm>,
       ],
     },
   ];
@@ -133,13 +177,7 @@ const Client: React.FC = () => {
           </Button>,
         ]}
         request={queryDataPage}
-        // params={{}}
         columns={columns}
-        // rowSelection={{
-        //   onChange: (_, selectedRows) => {
-        //     setSelectedRows(selectedRows);
-        //   },
-        // }}
       />
       <AddModal
         addVisible={addVisible}

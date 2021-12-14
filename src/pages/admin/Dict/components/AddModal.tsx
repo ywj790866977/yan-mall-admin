@@ -1,5 +1,5 @@
 import React from 'react';
-import { ModalForm, ProFormText } from '@ant-design/pro-form';
+import ProForm, { ModalForm, ProFormSwitch, ProFormText } from '@ant-design/pro-form';
 
 interface ModalProps {
   addVisible: boolean;
@@ -25,6 +25,38 @@ const AddModal: React.FC<ModalProps> = (prop: ModalProps) => {
       onFinish={finished}
     >
       <ProFormText hidden name="id" initialValue={type === 2 ? data.id : undefined} />
+
+      <ProFormText
+        name="name"
+        width="md"
+        label="字典名称"
+        placeholder="请输入字典名称"
+        initialValue={type === 2 ? data.name : undefined}
+      />
+
+      <ProFormText
+        name="code"
+        width="md"
+        label="字典编码"
+        placeholder="请输入字典编码"
+        initialValue={type === 2 ? data.code : undefined}
+      />
+
+      <ProFormText
+        name="remark"
+        width="md"
+        label="字典备注"
+        placeholder="请输入字典备注"
+        initialValue={type === 2 ? data.remark : undefined}
+      />
+
+      <ProForm.Group>
+        <ProFormSwitch
+          name="status"
+          label="状态"
+          initialValue={data !== undefined ? data.status : undefined}
+        />
+      </ProForm.Group>
     </ModalForm>
   );
 };

@@ -47,6 +47,8 @@ declare namespace API {
     name?: string;
     status: number;
     code: string;
+    menuIds: number[];
+    permissionIds: number[];
   };
 
   type Dept = {
@@ -63,6 +65,8 @@ declare namespace API {
     name: string;
     code: string;
     status: number;
+    menuIds: number[];
+    permissionIds: number[];
   };
 
   type ClientListItem = {
@@ -72,7 +76,9 @@ declare namespace API {
     scope: string;
     autoapprove: string;
     authorizedGrantTypes: string;
+    grantTypes: string[];
     accessTokenValidity: string;
+    refreshTokenValidity: number;
   };
 
   type PermissionListItem = {
@@ -106,8 +112,19 @@ declare namespace API {
     code: string;
     remark: string;
     status: number;
+    children: DictItem[];
     createdAt: string;
     updatedAt: string;
+  };
+
+  type DictItem = {
+    id: string;
+    name: string;
+    value: string;
+    dictCode: string;
+    defaulted: number;
+    status: number;
+    remark: string;
   };
 
   type DeptListItem = {

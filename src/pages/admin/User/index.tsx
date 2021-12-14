@@ -203,11 +203,6 @@ const UserList: React.FC<UserListProps> = (props: UserListProps) => {
 
   const columns: ProColumns<API.UserListItem>[] = [
     {
-      dataIndex: 'index',
-      valueType: 'indexBorder',
-      width: '5%',
-    },
-    {
       title: '用户Id',
       dataIndex: 'id',
       search: false,

@@ -1,19 +1,17 @@
 import React from 'react';
 import ProForm, {
   ModalForm,
-  ProFormRadio,
   ProFormSelect,
   ProFormSwitch,
   ProFormText,
 } from '@ant-design/pro-form';
-import { queryRoleList } from '@/services/admin/role';
-import { queryDept } from '@/services/admin/dept';
+import { queryMenuPage } from '@/services/admin/menu';
 
 interface ModalProps {
   addVisible: boolean;
   cancel: () => void;
   finished: (values: any) => Promise<boolean | void>;
-  data: API.User;
+  data: API.Role;
   type: number;
 }
 
@@ -21,9 +19,13 @@ const AddModal: React.FC<ModalProps> = (prop: ModalProps) => {
   const { addVisible, cancel, finished, data, type } = prop;
 
   const getRoles: any = async () => {
-    const res = await queryRoleList();
+    const res = await queryMenuPage({ size: 100 });
     if (res.code === 0) {
-      const roles = res.data;
+      const pageData: API.PageRes<API.MenuListItem> = res.data;
+      const roles = pageData.records;
+      if (roles === undefined) {
+        return [];
+      }
       return roles.map((item) => {
         return {
           value: item.id,
@@ -32,20 +34,6 @@ const AddModal: React.FC<ModalProps> = (prop: ModalProps) => {
       });
     }
     return {};
-  };
-
-  const doGetDept: any = async () => {
-    const res = await queryDept();
-    if (res.code !== 0 || !res.data || res.data.length <= 0) {
-      return null;
-    }
-    const roles = res.data;
-    return roles.map((item) => {
-      return {
-        value: item.id,
-        label: item.name,
-      };
-    });
   };
 
   return (
@@ -64,76 +52,35 @@ const AddModal: React.FC<ModalProps> = (prop: ModalProps) => {
       <ProFormText
         allowClear
         width="xl"
-        name="username"
-        label="用户名"
+        name="name"
+        label="角色名称"
         tooltip="最长为 24 位"
         placeholder="请输入用户名"
-        rules={[{ required: true, message: '请输入用户名!' }]}
-        initialValue={data !== undefined ? data.username : undefined}
+        rules={[{ required: true, message: '请输入名称!' }]}
+        initialValue={data !== undefined ? data.name : undefined}
       />
 
       <ProFormText
         allowClear
         width="xl"
-        name="nickname"
-        label="昵称"
-        placeholder="请输入昵称"
-        initialValue={data !== undefined ? data.nickname : undefined}
-      />
-      <ProFormRadio.Group
-        label="性别"
-        name="gender"
-        initialValue={data !== undefined ? data.gender : 0}
-        // valueEnum={API.GenderEnum}
-        options={[
-          { value: 0, label: '男' },
-          { value: 1, label: '女' },
-        ]}
-      />
-
-      <ProFormText
-        rules={[{ required: true, message: '请输入用户名!' }]}
-        allowClear
-        width="xl"
-        name="mobile"
-        label="手机号"
-        placeholder="请输入手机号"
-        initialValue={data !== undefined ? data.mobile : undefined}
-      />
-
-      <ProFormText
-        rules={[{ required: true, message: '请输入邮箱!' }]}
-        allowClear
-        width="xl"
-        name="email"
-        label="邮箱"
-        placeholder="请输入邮箱"
-        initialValue={data !== undefined ? data.email : undefined}
+        name="code"
+        label="角色编码"
+        placeholder="请输入编码"
+        initialValue={data !== undefined ? data.code : undefined}
       />
 
       <ProFormSelect
-        rules={[{ required: true, message: '请选择用户角色!' }]}
+        rules={[{ required: true, message: '请选择部门权限!' }]}
         allowClear
         width="xl"
-        name="roleIds"
-        label="角色"
+        name="menuIds"
+        label="菜单权限"
         fieldProps={{
           mode: 'multiple',
         }}
-        placeholder="请选择用户角色"
-        initialValue={data !== undefined ? data.roleIds : undefined}
+        placeholder="请选菜单权限"
+        initialValue={data !== undefined ? data.menuIds : undefined}
         request={getRoles}
-      />
-
-      <ProFormSelect
-        rules={[{ required: true, message: '请选择用户部门!' }]}
-        allowClear
-        width="xl"
-        name="deptId"
-        label="部门"
-        placeholder="搜索部门"
-        initialValue={data !== undefined ? data.deptId : undefined}
-        request={doGetDept}
       />
 
       <ProForm.Group>
